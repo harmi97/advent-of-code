@@ -1,19 +1,6 @@
+from pathlib import Path
+
 import regex as re  # pip install regex
-
-with open("1/input.txt", newline="") as f:
-    lines = f.readlines()
-
-# Part 1
-
-numbers = []
-for line in lines:
-    digits = re.findall(r"[0-9]", line)
-    if digits:
-        numbers.append(int(digits[0] + digits[-1]))
-print(sum(numbers))
-
-
-# Part 2
 
 NUMBER_MAP = {
     "one": 1,
@@ -26,7 +13,36 @@ NUMBER_MAP = {
     "eight": 8,
     "nine": 9,
 }
-digits_str = f"[0-9]|{'|'.join(NUMBER_MAP.keys())}"
+INPUT_FILE_PATH = Path(Path(__file__).parent, "input.txt")
+
+
+def read_file():
+    with open(INPUT_FILE_PATH, newline="") as f:
+        lines = f.readlines()
+    return lines
+
+
+# Part 1
+def solution_part1(lines):
+    numbers = []
+    for line in lines:
+        digits = re.findall(r"[0-9]", line)
+        if digits:
+            numbers.append(int(digits[0] + digits[-1]))
+    print(sum(numbers))
+
+
+# Part 2
+def solution_part2(lines):
+    digits_str = f"[0-9]|{'|'.join(NUMBER_MAP.keys())}"
+    numbers = []
+    for line in lines:
+        digits = re.findall(digits_str, line, overlapped=True)
+        if digits:
+            first = convert_to_digit(digits[0])
+            last = convert_to_digit(digits[-1])
+            numbers.append(int(first + last))
+    print(sum(numbers))
 
 
 def convert_to_digit(x):
@@ -36,12 +52,7 @@ def convert_to_digit(x):
         return x
 
 
-numbers = []
-for line in lines:
-    digits = re.findall(digits_str, line, overlapped=True)
-    print(digits)
-    if digits:
-        first = convert_to_digit(digits[0])
-        last = convert_to_digit(digits[-1])
-        numbers.append(int(first + last))
-print(sum(numbers))
+if __name__ == "__main__":
+    lines = read_file()
+    solution_part1(lines)
+    solution_part2(lines)

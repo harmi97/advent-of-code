@@ -1,6 +1,5 @@
+import re
 from pathlib import Path
-
-import regex as re  # pip install regex
 
 NUMBER_MAP = {
     "one": 1,
@@ -29,20 +28,20 @@ def solution_part1(lines):
         digits = re.findall(r"[0-9]", line)
         if digits:
             numbers.append(int(digits[0] + digits[-1]))
-    print(sum(numbers))
+    print(f"Part 1 result = {sum(numbers)}")
 
 
 # Part 2
 def solution_part2(lines):
-    digits_str = f"[0-9]|{'|'.join(NUMBER_MAP.keys())}"
+    digits_str = f"(?=(\d|{'|'.join(NUMBER_MAP.keys())}))"
     numbers = []
     for line in lines:
-        digits = re.findall(digits_str, line, overlapped=True)
+        digits = re.findall(digits_str, line)
         if digits:
             first = convert_to_digit(digits[0])
             last = convert_to_digit(digits[-1])
             numbers.append(int(first + last))
-    print(sum(numbers))
+    print(f"Part 2 result = {sum(numbers)}")
 
 
 def convert_to_digit(x):

@@ -28,5 +28,22 @@ def part1_solution():
     print(f"Part 1 result = {sum(valid_game_ids)}")
 
 
+def part2_solution():
+    lines = read_file()
+    game_powers = []
+    for line in lines:
+        max_dice = {"red": 1, "green": 1, "blue": 1}
+        dices = re.findall(r"(?P<count>\d*) (?P<dice>blue|green|red)", line)
+        for dice in dices:
+            dice_count, dice_color = dice
+            dice_count = int(dice_count)
+            if max_dice[dice_color] < dice_count:
+                max_dice[dice_color] = dice_count
+        game_power = max_dice["red"] * max_dice["blue"] * max_dice["green"]
+        game_powers.append(game_power)
+    print(f"Part 2 result = {sum(game_powers)}")
+
+
 if __name__ == "__main__":
     part1_solution()
+    part2_solution()

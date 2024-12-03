@@ -14,7 +14,7 @@ def part1(data):
     for d in data:
         d = re.findall(r"[0-9]{1,3}", d)
         mul_sum += int(d[0]) * int(d[1])
-    print(f"Part 1: result = {mul_sum}")
+    return mul_sum
 
 
 def part2(data):
@@ -23,15 +23,10 @@ def part2(data):
         "",
         data,
     )
-    mul_sum = 0
-    mul_parts = re.findall(r"mul\([0-9]{1,3},[0-9]{1,3}\)", do_parts)
-    for mul_part in mul_parts:
-        mul_part = re.findall(r"[0-9]{1,3}", mul_part)
-        mul_sum += int(mul_part[0]) * int(mul_part[1])
-    print(f"Part 2: result = {mul_sum}")
+    return part1(do_parts)
 
 
 if __name__ == "__main__":
-    reports = read_file()
-    part1(reports)
-    part2(reports)
+    result = read_file()
+    print(f"Part 1: result = {part1(result)}")
+    print(f"Part 2: result = {part2(result)}")

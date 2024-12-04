@@ -21,7 +21,17 @@ def read_file():
     return data
 
 
-def check(x, y, data):
+def part1(data):
+    n_xmas = 0
+    for y, row in enumerate(data):
+        for x, col in enumerate(row):
+            if col == "X":
+                result = part_1_check(x, y, data)
+                n_xmas += result
+    return n_xmas
+
+
+def part_1_check(x, y, data):
     n_xmas = 0
     for direction, coords in DIRECTIONS.items():
         # print(f"Checking ({x}, {y}) {direction=}")
@@ -53,18 +63,34 @@ def check(x, y, data):
     return n_xmas
 
 
-def part1(data):
+def part2(data):
     n_xmas = 0
     for y, row in enumerate(data):
         for x, col in enumerate(row):
-            if col == "X":
-                result = check(x, y, data)
+            if col == "A":
+                result = part_2_check(x, y, data)
                 n_xmas += result
     return n_xmas
 
 
-def part2(data):
-    pass
+def part_2_check(x, y, data):
+    sides_match = 0
+    for c1, c2 in (
+        ("diagonal_up_right", "diagonal_down_left"),
+        ("diagonal_up_left", "diagonal_down_right"),
+    ):
+        try:
+            char1 = data[y + DIRECTIONS[c1][1]][x + DIRECTIONS[c1][0]]
+            char2 = data[y + DIRECTIONS[c2][1]][x + DIRECTIONS[c2][0]]
+            if f"{char1}A{char2}" == XMAS[1:] or f"{char2}A{char1}" == XMAS[1:]:
+                sides_match += 1
+                continue
+            break
+        except IndexError:
+            break
+    if sides_match == 2:
+        return 1
+    return 0
 
 
 if __name__ == "__main__":

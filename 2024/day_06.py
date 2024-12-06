@@ -1,4 +1,7 @@
+from copy import deepcopy
 from pathlib import Path
+
+from tqdm import tqdm
 
 # (x,y) axes
 DIRECTIONS = {
@@ -22,7 +25,7 @@ def get_starting_position(data):
                 return x, y
 
 
-def part1(data):
+def part1(data, print_result=False):
     x0, y0 = get_starting_position(data)
     is_out_of_bounds = False
     direction = 0
@@ -44,13 +47,33 @@ def part1(data):
                     steps += 1
                 x0 = x1
                 y0 = y1
+                yield (x1, y1)
         except IndexError:
             is_out_of_bounds = True
-    print(f"Part 1 result: {steps}")
-    with open(Path(Path(__file__).parent, "6_new.txt"), "w") as f:
-        f.writelines(["".join(row) for row in data])
+    if print_result:
+        print(f"Part 1 result: {steps}")
+
+
+# TODO: Optimize
+def part2(data, coords):
+    loop_positions = 0
+    for x, y in tqdm(coords):
+        new_data = deepcopy(data)
+        new_data[y][x] = "#"
+        coords = []
+        for coord in part1(new_data):
+            if coord in coords:
+                pass
+            coords.append(coord)
+            if len(coords) > 130 * 130:
+                loop_positions += 1
+                break
+    print(f"Part 2 result: {loop_positions}")
 
 
 if __name__ == "__main__":
     data = read_file()
-    part1(data)
+    part1_generator = part1(deepcopy(data), print_result=True)
+    start_coords = get_starting_position(data)
+    coords = set(coords for coords in part1_generator if coords != start_coords)
+    part2(data, coords)

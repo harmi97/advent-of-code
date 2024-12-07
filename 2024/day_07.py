@@ -1,10 +1,12 @@
 import re
-from itertools import batched, product
+from itertools import product
+from operator import add, concat, mul
 from pathlib import Path
 
 from tqdm import tqdm
 
-OPERATORS = ("+", "*")
+OPERATORS_PART1 = (add, mul)
+OPERATORS_PART2 = (add, mul, concat)
 
 
 def read_file():
@@ -13,30 +15,33 @@ def read_file():
     return [re.findall(r"[0-9]{1,}", line) for line in lines]
 
 
-def part1(data):
+def solve(data, operators):
     result = 0
     for row in tqdm(data):
         expected_result = int(row[0])
-        values = list(batched(row[1:], n=2))
-        formula = ""
-        for i, pair in enumerate(values):
-            if i == 0:
-                formula = f"({pair[0]}" + "{}" + f"{pair[1]})"
-            elif len(pair) == 2 and i != 0:
-                formula = f"(({formula}" + "{}" + f"{pair[0]})" + "{}" + f"{pair[1]})"
-            else:
-                formula = f"({formula}" + "{}" + f"{pair[0]})"
-        operators = list(product(OPERATORS, repeat=len(row[1:]) - 1))
-        test_passed = False
-        for ops in operators:
-            formula_with_ops = formula.format(*ops)
-            if expected_result == eval(formula_with_ops):
-                test_passed = True
-        if test_passed:
-            result += expected_result
-    print(result)
+        ops_combinations = product(operators, repeat=len(row[1:]) - 1)
+        is_valid = False
+        for ops in ops_combinations:
+            for i, val in enumerate(row[1:]):
+                if i == 0:
+                    prev_value = int(val)
+                    continue
+                if ops[i - 1] == concat:
+                    prev_value = int(ops[i - 1](str(prev_value), str(val)))
+                else:
+                    prev_value = ops[i - 1](int(prev_value), int(val))
+                if prev_value > expected_result:
+                    break
+                if prev_value == expected_result:
+                    is_valid = True
+                    break
+            if is_valid:
+                result += expected_result
+                break
+    return result
 
 
 if __name__ == "__main__":
     data = read_file()
-    part1(data)
+    print(f"Part 1 result = {solve(data, OPERATORS_PART1)}")
+    print(f"Part 2 result = {solve(data, OPERATORS_PART2)}")

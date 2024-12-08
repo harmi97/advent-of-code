@@ -53,8 +53,47 @@ def part1(data):
     print(len(antidote_positions))
 
 
+def get_antidote_positions(ant1, ant2, x_len, y_len):
+    x_dist = abs(ant1[0] - ant2[0])
+    y_dist = abs(ant1[1] - ant2[1])
+    # print(f"Compare {ant1} and {ant2}")
+    for ops in ((add, add), (sub, sub), (sub, add), (add, sub)):
+        new_x = ops[0](ant1[0], x_dist)
+        new_y = ops[1](ant1[1], y_dist)
+        # print(f"Check ({new_x}, {new_y})")
+        if (abs(new_x - ant2[0]) >= x_dist and abs(new_y - ant2[1]) >= y_dist) or (
+            new_x,
+            new_y,
+        ) == ant2:
+            while new_x < x_len and new_y < y_len and new_x >= 0 and new_y >= 0:
+                yield new_x, new_y
+                new_x = ops[0](new_x, x_dist)
+                new_y = ops[1](new_y, y_dist)
+
+
+def part2(data):
+    x_len = len(data[0])
+    y_len = len(data)
+    antenas = find_antenas(data)
+    antidote_positions = set()
+    for antena_positions in antenas.values():
+        for antena_position in antena_positions:
+            for other_position in antena_positions:
+                if antena_position == other_position:
+                    continue
+                new_positions = get_antidote_positions(
+                    antena_position, other_position, x_len, y_len
+                )
+                if new_positions is not None:
+                    for antidote_position in new_positions:
+                        antidote_positions.add(antidote_position)
+    #                     data[antidote_position[1]][antidote_position[0]] = "#"
+    # with open(Path(Path(__file__).parent, "8_test.txt"), "w") as f:
+    #     f.writelines("".join(line) + "\n" for line in data)
+    print(len(antidote_positions))
+
+
 if __name__ == "__main__":
     data = read_file()
     part1(data)
-    # print(f"Part 1 result = {solve(data, OPERATORS_PART1)}")
-    # print(f"Part 2 result = {solve(data, OPERATORS_PART2)}")
+    part2(data)

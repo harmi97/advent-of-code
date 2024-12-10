@@ -17,19 +17,27 @@ def get_trail_start_positions(data):
 
 
 def find_paths(data, x, y):
-    result = set()
+    result = []
     for dx, dy in ((0, 1), (0, -1), (1, 0), (-1, 0)):
         x1 = x + dx
         y1 = y + dy
         if -1 < x1 < len(data[y]) and -1 < y1 < len(data):
             if data[y1][x1] == 9 and data[y][x] == 8:
-                result.add((x1, y1))
+                result.append((x1, y1))
             elif data[y1][x1] == data[y][x] + 1:
-                result.update(find_paths(data, x1, y1))
+                result.extend(find_paths(data, x1, y1))
     return result
 
 
 def part1(data):
+    start_positions = get_trail_start_positions(data)
+    result = 0
+    for x, y in start_positions:
+        result += len(set(find_paths(data, x, y)))
+    print(result)
+
+
+def part2(data):
     start_positions = get_trail_start_positions(data)
     result = 0
     for x, y in start_positions:
@@ -40,3 +48,4 @@ def part1(data):
 if __name__ == "__main__":
     data = read_file()
     part1(data)
+    part2(data)

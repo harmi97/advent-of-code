@@ -9,32 +9,38 @@ def read_file():
     return [int(x) for x in line.split(" ")]
 
 
-def apply_rules(value):
+RESULTS_MAP = {}
+
+
+def apply_rules_rec(value, iter, max_iter):
+    if iter >= max_iter:
+        return 0
+    result = RESULTS_MAP.get((value, iter), 0)
+    if result:
+        return result
     if value == 0:
-        value = 1
+        result += apply_rules_rec(1, iter + 1, max_iter)
     elif len(str(value)) % 2 == 0:
+        result += 1
         v_len = int(len(str(value)) / 2)
-        value = [int(str(value)[:v_len]), int(str(value)[v_len:])]
+        result += apply_rules_rec(int(str(value)[:v_len]), iter + 1, max_iter)
+        result += apply_rules_rec(int(str(value)[v_len:]), iter + 1, max_iter)
     else:
-        value = value * 2024
-    return value
+        result += apply_rules_rec(value * 2024, iter + 1, max_iter)
+    RESULTS_MAP[(value, iter)] = result
+    return result
 
 
-def solve(data, blinks):
-    for _ in tqdm(range(blinks)):
-        new_data = []
-        for value in data:
-            new_val = apply_rules(value)
-            if isinstance(new_val, list):
-                new_data.extend(new_val)
-            else:
-                new_data.append(new_val)
-        data = new_data
-        # print(f"Blink {x} = {data}")
-    print(len(data))
+def solve2(data, blinks):
+    result = 0
+    for value in tqdm(data):
+        result += 1
+        result += apply_rules_rec(value, 0, blinks)
+    return result
 
 
 if __name__ == "__main__":
     data = read_file()
-    solve(data, 25)  # part 1
-    solve(data, 75)  # part 2
+    print(f"Part 1 result = {solve2(data, 25)}")
+    RESULTS_MAP = {}
+    print(f"Part 2 result = {solve2(data, 75)}")

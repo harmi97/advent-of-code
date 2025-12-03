@@ -3,42 +3,43 @@ from pathlib import Path
 data = Path(__file__.replace(".py", ".txt")).read_text()
 
 
+def find_largest(data: list[str], max_batteries: int) -> list[int]:
+    battery_banks = []
+    for battery_bank in data:
+        battery_bank = [int(x) for x in battery_bank]
+        batteries = []
+        start_i = 0  # Starting position of search
+        while len(batteries) != max_batteries:
+            # Edge-case when 1st value is max
+            if start_i == 0 and batteries:
+                battery_bank[start_i] = 0
+            # Add + 1 to include previous max number found
+            start_i = start_i if not batteries else start_i + 1
+            if start_i != 0:
+                battery_bank[:start_i] = [0] * start_i
+            end_i = len(battery_bank) - (max_batteries - len(batteries)) + 1
+            # Search only in limited window
+            search_area = battery_bank[start_i:end_i]
+            if not search_area:
+                break
+            max_battery = max(search_area)
+            start_i = battery_bank.index(max_battery)
+            batteries.append(max_battery)
+        battery_banks.append(int("".join([str(b) for b in batteries])))
+    return battery_banks
+
+
 def part1(data):
-    batteries = []
-    for bank in data:
-        print(f"{bank = } ")
-        largest1 = 0
-        largest2 = 0
-        num = 9
-        while not largest1 or not largest2:
-            # skip repeating
-            # if num == int(largest1):
-            #     num -= 1
-            #     continue
-            try:
-                idx = bank.index(str(num))
-                if idx + 1 == len(bank) and not largest1:
-                    num -= 1
-                    continue
-                battery = bank[idx]
-                bank = bank[idx + 1 :]
-                print(f"updated bank = {bank}")
-            except ValueError:
-                num -= 1
-                continue
-            if not largest1:
-                largest1 = battery
-            else:
-                largest2 = battery
-            # reset if found 1st
-            num -= 1
-            if largest1 or num < 1:
-                num = 9
-        batteries.append(int(largest1 + largest2))
-    print(f"Part1 = {sum(batteries)}")
+    battery_banks = find_largest(data, max_batteries=2)
+    print(f"Part1 = {sum(battery_banks)}")
+
+
+def part2(data):
+    battery_banks = find_largest(data, max_batteries=12)
+    print(f"Part2 = {sum(battery_banks)}")
 
 
 if __name__ == "__main__":
     data = data.split("\n")
-    print(data)
-    part1(data)
+    part1(data=data)
+    part2(data=data)

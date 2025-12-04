@@ -57,7 +57,27 @@ def part1(data: list[list[str]]):
     print(f"Part 1 = {len(valid_positions)}")
 
 
+def part2(data: list[list[str]]):
+    rolls_removed = []
+    while True:
+        rolls_removed_iter = []
+        for row_y, row in enumerate(data):
+            for col_x, col in enumerate(row):
+                if col != ROLL:
+                    continue
+                if is_valid_position(col_x, row_y, data):
+                    data[row_y][col_x] = "."
+                    rolls_removed_iter.append((col_x, row_y))
+                    continue
+        # Stop if no more rolls could be removed
+        if not rolls_removed_iter:
+            break
+        rolls_removed.extend(rolls_removed_iter)
+    print(f"Part 2 = {len(rolls_removed)}")
+
+
 if __name__ == "__main__":
     data = DATA.split("\n")
     data = [list(row) for row in data]
     part1(data)
+    part2(data)

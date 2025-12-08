@@ -9,6 +9,7 @@ MAX_CONNECTIONS = 1000
 
 
 def part1(data: list[tuple(int, int, int)]):
+    part1_result = None
     # Calculate distances
     distances = {}
     print("Calculating distances")
@@ -33,7 +34,10 @@ def part1(data: list[tuple(int, int, int)]):
     for jb1, jb2 in tqdm(distances.values()):
         if connections == MAX_CONNECTIONS:
             # if connections == 10:
-            break
+            new_circuits_lens = [len(x) for x in new_circuits]
+            new_circuits_lens.sort(reverse=True)
+            part1_result = math.prod(new_circuits_lens[:3])
+
         if jb1 not in remaining_jboxes and jb2 not in remaining_jboxes:
             jb1_circuit = None
             jb2_circuit = None
@@ -80,12 +84,12 @@ def part1(data: list[tuple(int, int, int)]):
             continue
         connections += 1
 
-    # pprint(distances)
-    # pprint(sorted(new_circuits, key=len, reverse=True))
-    new_circuits_lens = [len(x) for x in new_circuits]
-    new_circuits_lens.sort(reverse=True)
-    # print(new_circuits_lens)
-    print(f"Part 1  = {math.prod(new_circuits_lens[:3])}")
+    last_value = new_circuits[0][-1]
+    # Get closes box to last one except self
+    closest_to_last = sorted(data, key=lambda x: math.dist(x, last_value))[1]
+    part2_result = last_value[0] * closest_to_last[0]
+    print(f"Part 1  = {part1_result}")
+    print(f"Part 2  = {part2_result}")
 
 
 if __name__ == "__main__":

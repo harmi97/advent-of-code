@@ -7,29 +7,6 @@ from tqdm import tqdm
 DATA = Path(__file__.replace(".py", ".txt")).read_text(encoding="utf-8")
 
 
-# class Polygon:
-# def __init__(self, points: list[tuple[int, int]]):
-#     self.points = sorted(points)
-
-# def is_inside(self, point: tuple[int, int]) -> bool:
-#     x, y = point[0], point[1]
-#     n = len(self.points)
-#     inside = False
-#     p1x, p1y = self.points[0]
-#     for i in range(n + 1):
-#         p2x, p2y = self.points[i % n]
-#         if y > min(p1y, p2y):
-#             if y <= max(p1y, p2y):
-#                 if x <= max(p1x, p2x):
-#                     if p1y != p2y:
-#                         xints = (y - p1y) * (p2x - p1x) / (p2y - p1y) + p1x
-#                     if p1x == p2x or x <= xints:
-#                         inside = not inside
-#         p1x, p1y = p2x, p2y
-#     print(point, inside)
-#     return inside
-
-
 def part1(data: list[tuple[int, int]]):
     print("Running Part 1")
     max_area = 0
@@ -52,7 +29,6 @@ def part1(data: list[tuple[int, int]]):
 
 def part2(data: list[tuple[int, int]]):
     print("Running Part 2")
-    # polygon = Polygon(data)
     polygon = Polygon(data)
     max_area = 0
     for tile in tqdm(data):
@@ -86,6 +62,5 @@ def part2(data: list[tuple[int, int]]):
 if __name__ == "__main__":
     data = DATA.splitlines()
     data = [tuple(int(x) for x in r.split(",")) for r in data]
-    # data.sort()
     part1(data)
     part2(data)

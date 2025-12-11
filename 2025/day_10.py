@@ -3,6 +3,8 @@ from __future__ import annotations
 from itertools import combinations
 from pathlib import Path
 
+from z3 import Int, Optimize, Sum, sat
+
 DATA = Path(__file__.replace(".py", ".txt")).read_text(encoding="utf-8")
 
 
@@ -24,7 +26,8 @@ class Machine:
         self.lights = "." * len(lights)
         self.lights_end_position = lights
         self.buttons = buttons
-        self.joltage = joltage
+        self.joltage = [0] * len(joltage)
+        self.joltage_end_position = joltage
 
     @property
     def lights_count(self) -> int:
@@ -34,9 +37,10 @@ class Machine:
     def buttons_count(self) -> int:
         return len(self.buttons)
 
-    def reset_lights(self) -> None:
-        """Resets lights to starting position."""
+    def reset_machine(self) -> None:
+        """Resets lights and joltage to starting position."""
         self.lights = "." * len(self.lights)
+        self.joltage = [0] * len(self.joltage)
 
     def press_button(
         self, button_idx: int | None = None, button_value: tuple[int] | None = None
@@ -70,8 +74,9 @@ class Machine:
             )
         if button_value:
             button_idx = self.buttons.index(button_value)
-        for light_idx in self.buttons[button_idx]:
-            self._flip_light(light_idx)
+        for idx in self.buttons[button_idx]:
+            self._flip_light(idx)
+            self.joltage[idx] += 1
 
     def _flip_light(self, light_idx: int):
         """Flips the light at specified index."""
@@ -97,7 +102,7 @@ def part1(machines: list[Machine]):
         ]
         for combo in presses_combinations:
             presses = 0
-            machine.reset_lights()
+            machine.reset_machine()
             for button in combo:
                 presses += 1
                 machine.press_button(button_value=button)
@@ -108,7 +113,39 @@ def part1(machines: list[Machine]):
     print(f"Part 1 = {sum(min_presses_list)}")
 
 
+def part2(machines: list[Machine]):
+    min_presses_list = []
+    for machine in machines:
+        num_buttons = machine.buttons_count
+        num_lights = machine.lights_count
+        opt = Optimize()
+        presses = [Int(f"presses_{idx}") for idx in range(num_buttons)]
+        for var in presses:
+            opt.add(var >= 0)
+        for light_idx in range(num_lights):
+            contributing_buttons = [
+                presses[button_idx]
+                for button_idx, button in enumerate(machine.buttons)
+                if light_idx in button
+            ]
+            target = machine.joltage_end_position[light_idx]
+            if contributing_buttons:
+                opt.add(Sum(contributing_buttons) == target)
+            else:
+                if target != 0:
+                    raise ValueError("No button affects light")
+        total_presses = Sum(presses)
+        opt.minimize(total_presses)
+        if opt.check() != sat:
+            raise ValueError("No solution")
+        model = opt.model()
+        min_presses = sum(model[var].as_long() for var in presses)
+        min_presses_list.append(min_presses)
+    print(f"Part 2 = {sum(min_presses_list)}")
+
+
 if __name__ == "__main__":
     data = DATA.splitlines()
     machines = [Machine.from_line(line) for line in data]
     part1(machines)
+    part2(machines)

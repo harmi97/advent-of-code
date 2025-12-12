@@ -1,3 +1,5 @@
+"""Advent of Code solution of Year 2024 Day 9."""
+
 from itertools import batched
 from pathlib import Path
 

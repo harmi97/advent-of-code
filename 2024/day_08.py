@@ -1,3 +1,5 @@
+"""Advent of Code solution of Year 2024 Day 8."""
+
 from collections import defaultdict
 from operator import add, sub
 from pathlib import Path

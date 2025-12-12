@@ -1,3 +1,5 @@
+"""Advent of Code solution of Year 2024 Day 6."""
+
 from copy import deepcopy
 from pathlib import Path
 

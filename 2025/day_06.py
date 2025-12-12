@@ -1,3 +1,5 @@
+"""Advent of Code solution of Year 2025 Day 6."""
+
 import math
 from pathlib import Path
 

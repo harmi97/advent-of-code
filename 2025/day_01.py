@@ -1,3 +1,5 @@
+"""Advent of Code solution of Year 2025 Day 1."""
+
 import operator
 from pathlib import Path
 from typing import Literal

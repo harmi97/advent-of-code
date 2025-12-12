@@ -1,3 +1,5 @@
+"""Advent of Code solution of Year 2025 Day 10."""
+
 from __future__ import annotations
 
 from itertools import combinations

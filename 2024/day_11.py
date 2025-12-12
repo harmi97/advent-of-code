@@ -1,3 +1,5 @@
+"""Advent of Code solution of Year 2024 Day 11."""
+
 from pathlib import Path
 
 from tqdm import tqdm

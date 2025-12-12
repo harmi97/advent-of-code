@@ -1,3 +1,5 @@
+"""Advent of Code solution of Year 2023 Day 1."""
+
 import re
 from pathlib import Path
 

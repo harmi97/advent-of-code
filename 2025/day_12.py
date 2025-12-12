@@ -1,3 +1,7 @@
+"""Advent of Code solution of Year 2025 Day 12.
+NOTE: This is last day - there is no part2.
+"""
+
 from __future__ import annotations
 
 from copy import deepcopy

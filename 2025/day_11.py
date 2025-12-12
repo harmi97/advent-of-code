@@ -1,3 +1,5 @@
+"""Advent of Code solution of Year 2025 Day 11."""
+
 from collections import Counter
 from functools import lru_cache
 from pathlib import Path

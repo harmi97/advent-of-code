@@ -1,3 +1,5 @@
+"""Advent of Code solution of Year 2025 Day 3."""
+
 from pathlib import Path
 
 data = Path(__file__.replace(".py", ".txt")).read_text()

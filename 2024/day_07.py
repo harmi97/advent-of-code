@@ -1,3 +1,5 @@
+"""Advent of Code solution of Year 2024 Day 7."""
+
 import re
 from itertools import product
 from operator import add, concat, mul
